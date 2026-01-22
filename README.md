@@ -74,6 +74,12 @@ Crypto Tracker is a Django-based web application designed to help users monitor 
    ```
 
 6. **Start Celery Worker**:
+   If you don't have Redis running, you can do it with:
+   ```bash
+   docker run -d -p 6379:6379 --name redis redis:latest
+   ```
+
+   Then start celery with:
    ```bash
    celery -A dcp worker --loglevel=info
    ```
