@@ -75,7 +75,7 @@ Crypto Tracker is a Django-based web application designed to help users monitor 
 
 6. **Start Celery Worker**:
    ```bash
-   celery -A crypto_tracker worker --loglevel=info
+   celery -A dcp worker --loglevel=info
    ```
 
 7. **Access the Application**:
