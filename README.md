@@ -57,14 +57,15 @@ Crypto Tracker is a Django-based web application designed to help users monitor 
    pip install -r requirements.txt
    ```
 
-4. **Load Initial Data**:
-   ```bash
-   python manage.py initialize_db
-   ```
 3. **Apply Migrations**:
    ```bash
    python manage.py makemigrations
    python manage.py migrate
+   ```
+
+4. **Load Initial Data**:
+   ```bash
+   python manage.py initialize_db
    ```
 
 5. **Run the Development Server**:
