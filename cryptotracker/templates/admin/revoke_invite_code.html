@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-6">
+    <div class="columns">
+        <div class="column is-3">
+            <aside class="menu">
+                <p class="menu-label">Admin</p>
+                <ul class="menu-list">
+                    <li><a href="{% url 'admin_panel' %}">Dashboard</a></li>
+                    <li><a href="{% url 'invite_codes' %}">Invite Codes</a></li>
+                    <li><a href="{% url 'generate_invite_code' %}">Generate Invite Code</a></li>
+                    <li><a href="{% url 'user_management' %}">User Management</a></li>
+                </ul>
+            </aside>
+        </div>
+        <div class="column is-9">
+            <div class="box">
+                <h1 class="title is-3">Revoke Invite Code</h1>
+                
+                <div class="notification is-warning">
+                    <p>Are you sure you want to revoke this invite code?</p>
+                    <p><strong>Code:</strong> <code>{{ code.code }}</code></p>
+                    <p><strong>Created by:</strong> {{ code.created_by.username }}</p>
+                    <p><strong>Created at:</strong> {{ code.created_at|date:"Y-m-d H:i" }}</p>
+                </div>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="field is-grouped">
+                        <div class="control">
+                            <button class="button is-danger" type="submit">Revoke Code</button>
+                        </div>
+                        <div class="control">
+                            <a href="{% url 'invite_codes' %}" class="button is-light">Cancel</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

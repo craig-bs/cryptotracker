@@ -17,6 +17,12 @@ from cryptotracker.views import (
     user_addresses,
     waiting_page,
     rewards,
+    admin_panel,
+    generate_invite_code,
+    invite_codes,
+    revoke_invite_code,
+    user_management,
+    toggle_admin_status,
 )
 
 urlpatterns = [
@@ -72,4 +78,11 @@ urlpatterns = [
     path("check_task_status/", check_task_status, name="check_task_status"),
     path("statistics/", statistics, name="statistics"),
     path("rewards/", rewards, name="rewards"),
+    # Admin URLs
+    path("admin/", admin_panel, name="admin_panel"),
+    path("admin/generate_invite_code/", generate_invite_code, name="generate_invite_code"),
+    path("admin/invite_codes/", invite_codes, name="invite_codes"),
+    path("admin/revoke_invite_code/<int:code_id>/", revoke_invite_code, name="revoke_invite_code"),
+    path("admin/user_management/", user_management, name="user_management"),
+    path("admin/toggle_admin/<int:user_id>/", toggle_admin_status, name="toggle_admin"),
 ]

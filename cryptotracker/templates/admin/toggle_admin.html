@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-6">
+    <div class="columns">
+        <div class="column is-3">
+            <aside class="menu">
+                <p class="menu-label">Admin</p>
+                <ul class="menu-list">
+                    <li><a href="{% url 'admin_panel' %}">Dashboard</a></li>
+                    <li><a href="{% url 'invite_codes' %}">Invite Codes</a></li>
+                    <li><a href="{% url 'generate_invite_code' %}">Generate Invite Code</a></li>
+                    <li><a href="{% url 'user_management' %}">User Management</a></li>
+                </ul>
+            </aside>
+        </div>
+        <div class="column is-9">
+            <div class="box">
+                <h1 class="title is-3">Toggle Admin Status</h1>
+                
+                <div class="notification is-warning">
+                    <p>Are you sure you want to change the admin status for this user?</p>
+                    <p><strong>User:</strong> {{ target_user.username }}</p>
+                    <p><strong>Email:</strong> {{ target_user.email|default:"No email" }}</p>
+                    <p><strong>Current status:</strong> 
+                        {% if profile.is_admin %}
+                            <span class="tag is-success">Admin</span>
+                        {% else %}
+                            <span class="tag is-light">User</span>
+                        {% endif %}
+                    </p>
+                    <p><strong>New status:</strong> 
+                        {% if profile.is_admin %}
+                            <span class="tag is-light">User</span>
+                        {% else %}
+                            <span class="tag is-success">Admin</span>
+                        {% endif %}
+                    </p>
+                </div>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="field is-grouped">
+                        <div class="control">
+                            <button class="button is-warning" type="submit">
+                                {% if profile.is_admin %}Remove Admin{% else %}Make Admin{% endif %}
+                            </button>
+                        </div>
+                        <div class="control">
+                            <a href="{% url 'user_management' %}" class="button is-light">Cancel</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
