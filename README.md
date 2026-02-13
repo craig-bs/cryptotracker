@@ -110,7 +110,11 @@ Crypto Tracker is a Django-based web application designed to help users monitor 
    - **DJANGO_DEBUG**: Set to `False` for production.
 
 2. **Build and Run the Application**:
-   Use `docker-compose.yml` to build and run the application:
+   Use `docker-compose.yml` to build (optional):
+   ```bash
+   docker-compose build
+   ```
+   and run the application:
    ```bash
    docker-compose up
    ```
