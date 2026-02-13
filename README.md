@@ -57,14 +57,15 @@ Crypto Tracker is a Django-based web application designed to help users monitor 
    pip install -r requirements.txt
    ```
 
-4. **Load Initial Data**:
-   ```bash
-   python manage.py initialize_db
-   ```
 3. **Apply Migrations**:
    ```bash
    python manage.py makemigrations
    python manage.py migrate
+   ```
+
+4. **Load Initial Data**:
+   ```bash
+   python manage.py initialize_db
    ```
 
 5. **Run the Development Server**:
@@ -73,8 +74,14 @@ Crypto Tracker is a Django-based web application designed to help users monitor 
    ```
 
 6. **Start Celery Worker**:
+   If you don't have Redis running, you can do it with:
    ```bash
-   celery -A crypto_tracker worker --loglevel=info
+   docker run -d -p 6379:6379 --name redis redis:latest
+   ```
+
+   Then start celery with:
+   ```bash
+   celery -A dcp worker --loglevel=info
    ```
 
 7. **Access the Application**:
