@@ -10,7 +10,49 @@
                 
                 <form method="post">
                     {% csrf_token %}
-                    {{ form.as_p }}
+                    
+                    <div class="field">
+                        <label class="label" for="id_username">Username</label>
+                        <div class="control">
+                            <input class="input" type="text" name="username" id="id_username" required>
+                        </div>
+                        {% if form.username.errors %}
+                            <p class="help is-danger">{{ form.username.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="field">
+                        <label class="label" for="id_password1">Password</label>
+                        <div class="control">
+                            <input class="input" type="password" name="password1" id="id_password1" required>
+                        </div>
+                        {% if form.password1.errors %}
+                            <p class="help is-danger">{{ form.password1.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="field">
+                        <label class="label" for="id_password2">Confirm Password</label>
+                        <div class="control">
+                            <input class="input" type="password" name="password2" id="id_password2" required>
+                        </div>
+                        {% if form.password2.errors %}
+                            <p class="help is-danger">{{ form.password2.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="field">
+                        <label class="label" for="id_invite_code">Invite Code</label>
+                        <div class="control">
+                            <input class="input" type="text" name="invite_code" id="id_invite_code" 
+                                   {% if form.invite_code.field.required %}required{% endif %}>
+                        </div>
+                        <p class="help">{{ form.invite_code.help_text }}</p>
+                        {% if form.invite_code.errors %}
+                            <p class="help is-danger">{{ form.invite_code.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                    
                     <div class="field mt-4">
                         <div class="control">
                             <input class="button is-primary is-fullwidth" type="submit" value="Sign Up" />

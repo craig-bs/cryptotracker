@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-6">
+    <div class="columns">
+        <div class="column is-3">
+            <aside class="menu">
+                <p class="menu-label">Admin</p>
+                <ul class="menu-list">
+                    <li><a href="{% url 'admin_panel' %}">Dashboard</a></li>
+                    <li><a href="{% url 'invite_codes' %}">Invite Codes</a></li>
+                    <li><a href="{% url 'generate_invite_code' %}">Generate Invite Code</a></li>
+                    <li><a href="{% url 'user_management' %}">User Management</a></li>
+                </ul>
+            </aside>
+        </div>
+        <div class="column is-9">
+            <div class="box">
+                <h1 class="title is-3">Generate Invite Code</h1>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="field">
+                        <div class="control">
+                            <button class="button is-primary" type="submit">Generate New Invite Code</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

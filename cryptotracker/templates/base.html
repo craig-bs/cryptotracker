@@ -95,13 +95,22 @@
         <span>Rewards</span>
       </a>
     </li>
-    <!-- Stadistics Tab -->
-    <li class="{% if request.resolver_match.url_name == 'statistics' %}is-active{% endif %}">
-      <a href="{% url 'statistics' %}">
+     <!-- Stadistics Tab -->
+     <li class="{% if request.resolver_match.url_name == 'statistics' %}is-active{% endif %}">
+       <a href="{% url 'statistics' %}">
         <span class="icon"><i class="fas fa-chart-pie"></i></span>
-        <span>Statistics</span>
-      </a>
-    </li>
+         <span>Statistics</span>
+       </a>
+     </li>
+    <!-- Admin Tab -->
+    {% if request.user.is_authenticated and request.user.profile.is_admin %}
+     <li class="{% if 'admin' in request.resolver_match.url_name %}is-active{% endif %}">
+       <a href="{% url 'admin_panel' %}">
+        <span class="icon"><i class="fas fa-cog"></i></span>
+         <span>Admin</span>
+       </a>
+     </li>
+    {% endif %}
    </ul>
  </div>
  {% endif %}

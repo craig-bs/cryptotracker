@@ -201,6 +201,19 @@ class ErrorLog(models.Model):
     error_type = models.ForeignKey("ErrorTypes", on_delete=models.CASCADE)
 
 
+# Add the InviteCode model to the models.py for proper migration
+class InviteCode(models.Model):
+    code = models.CharField(max_length=32, unique=True)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_invite_codes')
+    used_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='used_invite_code')
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    used_at = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return f"InviteCode: {self.code} (Active: {self.is_active})"
+
+
 class SnapshotError(models.Model):
     """Track errors that occur during snapshot data collection"""
 

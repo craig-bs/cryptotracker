@@ -1,7 +1,7 @@
 from decimal import Decimal
 import logging
 from typing import Any, List, Type, cast, Optional
-from datetime import datetime
+from datetime import datetime, timezone
 
 
 from celery.result import GroupResult
@@ -14,8 +14,8 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from web3 import Web3
 
-from cryptotracker.form import AccountForm, UserAddressForm, Dateform
-from cryptotracker.models import Account, Snapshot, UserAddress, SnapshotError
+from cryptotracker.form import AccountForm, UserAddressForm, Dateform, SignUpForm, GenerateInviteCodeForm
+from cryptotracker.models import Account, Snapshot, UserAddress, SnapshotError, InviteCode
 from cryptotracker.protocols.protocols import get_protocols_snapshots
 from cryptotracker.eth_staking import get_aggregated_staking, get_last_validators
 from cryptotracker.tasks import run_daily_snapshot_update
@@ -58,13 +58,30 @@ def calculate_total_value(
 
 def sign_up(request: HttpRequest) -> HttpResponse:
     if request.method == "POST":
-        form: UserCreationForm = UserCreationForm(request.POST)
+        form: SignUpForm = SignUpForm(request.POST)
         if form.is_valid():
-            user = form.save()
+            # Create user
+            user = User.objects.create_user(
+                username=form.cleaned_data['username'],
+                password=form.cleaned_data['password1']
+            )
+
+            # First user is admin
+            if User.objects.count() == 1:
+                user.is_superuser = True
+                user.save()
+            else:
+                # Mark invite code as used
+                invite_code = form.cleaned_data['invite_code']
+                code_obj = InviteCode.objects.get(code=invite_code)
+                code_obj.used_by = user
+                code_obj.used_at = datetime.now(timezone.utc)
+                code_obj.save()
+
             login(request, user)
             return redirect(reverse("portfolio"))
     else:
-        form = UserCreationForm()
+        form = SignUpForm()
     return render(request, "registration/sign_up.html", {"form": form})
 
 
@@ -428,3 +445,104 @@ def statistics(request: HttpRequest) -> HttpResponse:
         "accounts_detail": accounts_detail,
     }
     return render(request, "statistics.html", context)
+
+
+# Helper function to check if user is admin
+def user_is_admin(user):
+    try:
+        return user.is_superuser
+    except AttributeError:
+        return False
+
+
+@login_required()
+def admin_panel(request: HttpRequest) -> HttpResponse:
+    if not user_is_admin(request.user):
+        return redirect("portfolio")
+
+    context = {
+        "user": request.user,
+    }
+    return render(request, "admin/admin_panel.html", context)
+
+
+@login_required()
+def generate_invite_code(request: HttpRequest) -> HttpResponse:
+    if not user_is_admin(request.user):
+        return redirect("portfolio")
+
+    if request.method == "POST":
+        form = GenerateInviteCodeForm(request.POST)
+        if form.is_valid():
+            invite_code = form.save(created_by=request.user)
+            return redirect("invite_codes")
+    else:
+        form = GenerateInviteCodeForm()
+
+    context = {
+        "form": form,
+    }
+    return render(request, "admin/generate_invite_code.html", context)
+
+
+@login_required()
+def invite_codes(request: HttpRequest) -> HttpResponse:
+    if not user_is_admin(request.user):
+        return redirect("portfolio")
+
+    codes = InviteCode.objects.all().order_by("-created_at")
+
+    context = {
+        "codes": codes,
+    }
+    return render(request, "admin/invite_codes.html", context)
+
+
+@login_required()
+def revoke_invite_code(request: HttpRequest, code_id: int) -> HttpResponse:
+    if not user_is_admin(request.user):
+        return redirect("portfolio")
+
+    code = get_object_or_404(InviteCode, id=code_id)
+
+    if request.method == "POST":
+        code.is_active = False
+        code.save()
+        return redirect("invite_codes")
+
+    context = {
+        "code": code,
+    }
+    return render(request, "admin/revoke_invite_code.html", context)
+
+
+@login_required()
+def user_management(request: HttpRequest) -> HttpResponse:
+    if not user_is_admin(request.user):
+        return redirect("portfolio")
+
+    users = User.objects.all().order_by("-date_joined")
+    context = {}
+    return render(request, "admin/user_management.html", context)
+
+
+@login_required()
+def toggle_admin_status(request: HttpRequest, user_id: int) -> HttpResponse:
+    if not user_is_admin(request.user):
+        return redirect("portfolio")
+
+    target_user = get_object_or_404(User, id=user_id)
+
+    # Don't allow users to toggle their own admin status
+    if target_user == request.user:
+        return redirect("user_management")
+
+    if request.method == "POST":
+        target_user.is_superuser = not target_user.is_superuser
+        target_user.save()
+        return redirect("user_management")
+
+    context = {
+        "target_user": target_user,
+    }
+    return render(request, "admin/toggle_admin.html", context)
