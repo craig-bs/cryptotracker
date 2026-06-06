@@ -13,5 +13,8 @@ __pycache__/
 .env*
 .addresses.py
 
+# Traefik Letsencrypt
+acme.json
+
 #misc
 TODO*
