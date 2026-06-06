@@ -15,7 +15,14 @@ services:
       - CELERY_RESULT_BACKEND=redis://redis:6379/0
       - REDIS_URL=redis://redis:6379
     labels:
-      com.centurylinklabs.watchtower.enable: "true"
+      - com.centurylinklabs.watchtower.enable: "true"
+      - "traefik.enable=true"
+      - "traefik.http.routers.myapp.rule=Host(`${DOMAIN}`)"
+      - "traefik.http.routers.myapp.entrypoints=websecure"
+      - "traefik.http.routers.myapp.tls.certresolver=letsencrypt"
+      - "traefik.http.services.myapp.loadbalancer.server.port=8000"
+    networks:
+      - proxy
 
   celery:
     image: thedance/cryptotracker:latest
@@ -55,6 +62,30 @@ services:
     ports:
       - "6379:6379"
 
+  # Proxy to redirect https to http at port 8000
+  traefik:
+    image: traefik:v3.1
+    container_name: traefik
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./traefik.yml:/traefik.yml:ro
+      - ./acme.json:/acme.json
+      - ./dynamic.yml:/dynamic.yml:ro
+    networks:
+      - proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.traefik.rule=Host(`${DOMAIN}`)"
+      - "traefik.http.routers.traefik.service=api@internal"
+      - "traefik.http.routers.traefik.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.traefik.entrypoints=websecure"
+      - "traefik.http.routers.traefik.middlewares=auth@file"
 
 #automatic update tool for running Docker containers
   watchtower:
@@ -64,3 +95,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     command: --interval 1000 --cleanup --label-enable
     restart: unless-stopped
+
+networks:
+  proxy:
+    external: true

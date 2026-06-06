@@ -1,0 +1,13 @@
+http:
+  services:
+    myapp-service:
+      loadBalancer:
+        servers:
+          - url: "http://host.docker.internal:8000"
+
+  # Basic auth for the Traefik dashboard (change password!)
+  middlewares:
+    auth:
+      basicAuth:
+        users:
+          - "admin:$apr1$H6uskkkW$IgXLP6ewTrSuBkTrqE8wj/"

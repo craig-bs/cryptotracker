@@ -60,7 +60,7 @@ Crypto Tracker is a Django-based web application designed to help users monitor 
 
   For docker:
    ```bash
-   cp env.docker.template .env.docker
+   cp env.docker.template .env
    ```
 
 ### Run Locally
@@ -143,6 +143,19 @@ Crypto Tracker is a Django-based web application designed to help users monitor 
 
 3. **Access the Application**:
    Open your browser and navigate to `http://$IP_HOST:8000`.
+
+#### HTTPS Reverse Proxy with Traefik + Let's Encrypt
+Edit these files and replace placeholders:
+
+- **`traefik.yml`**:
+  - Change `your-email@example.com` to your real email (for Let's Encrypt).
+
+- **`dynamic.yml`**:
+  - **Dashboard password**:
+    - Generate a new htpasswd string and replace the `users` line in `dynamic.yml` under the `auth` middleware:
+      ```bash
+      htpasswd -nb admin your-secure-password | openssl base64
+      ```
 
 ## Usage
 
