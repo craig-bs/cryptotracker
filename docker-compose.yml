@@ -15,7 +15,7 @@ services:
       - CELERY_RESULT_BACKEND=redis://redis:6379/0
       - REDIS_URL=redis://redis:6379
     labels:
-      - com.centurylinklabs.watchtower.enable: "true"
+      - "com.centurylinklabs.watchtower.enable"="true"
       - "traefik.enable=true"
       - "traefik.http.routers.myapp.rule=Host(`${DOMAIN}`)"
       - "traefik.http.routers.myapp.entrypoints=websecure"
