@@ -21,6 +21,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the application code into the container
 COPY . .
 
+# makemigrations complains if this variable is empty, but we only want it on runtime actually
+ARG DJANGO_CSRF_TRUSTED_ORIGINS
+
 # Make migrations
 
 RUN python manage.py makemigrations
