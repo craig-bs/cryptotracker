@@ -64,7 +64,7 @@ services:
 
   # Proxy to redirect https to http at port 8000
   traefik:
-    image: traefik:v3.1
+    image: traefik:latest
     container_name: traefik
     restart: unless-stopped
     security_opt:
