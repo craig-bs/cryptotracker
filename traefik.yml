@@ -25,7 +25,7 @@ entryPoints:
 providers:
   docker:
     exposedByDefault: false
-    network: proxy
+    network: cryptotracker_proxy
     watch: true
   file:
     filename: /dynamic.yml
