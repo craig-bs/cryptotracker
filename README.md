@@ -156,6 +156,12 @@ Edit these files and replace placeholders:
       ```bash
       htpasswd -nb admin your-secure-password | openssl base64
       ```
+- **`acme.json`**:
+  - Create and restrict permissions:
+    ```bash
+    touch acme.json
+    chmod 600 acme.json
+    ```
 
 ## Usage
 
