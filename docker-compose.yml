@@ -21,8 +21,8 @@ services:
       - "traefik.http.routers.myapp.entrypoints=websecure"
       - "traefik.http.routers.myapp.tls.certresolver=letsencrypt"
       - "traefik.http.services.myapp.loadbalancer.server.port=8000"
-    networks:
-      - proxy
+#    networks:
+#      - proxy
 
   celery:
     image: thedance/cryptotracker:latest
@@ -77,8 +77,8 @@ services:
       - ./traefik.yml:/traefik.yml:ro
       - ./acme.json:/acme.json
       - ./dynamic.yml:/dynamic.yml:ro
-    networks:
-      - proxy
+#    networks:
+#      - proxy
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.traefik.rule=Host(`${DOMAIN}`)"
@@ -96,5 +96,6 @@ services:
     command: --interval 1000 --cleanup --label-enable
     restart: unless-stopped
 
-networks:
-  proxy:
+#networks:
+#  proxy:
+#    external: true
